@@ -79,7 +79,7 @@ def export_all():
     output.seek(0)
     return send_file(output, attachment_filename='all_data.xlsx', as_attachment=True)
 
-@app.route('/dashboard')
+@app.route('/karyawan')
 def karyawan():
     karyawan_conn = get_karyawan_db_connection()
     karyawan_data = karyawan_conn.execute('SELECT * FROM karyawan').fetchall()
