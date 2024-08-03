@@ -81,8 +81,12 @@ class Face_Recognizer:
         self.reclassify_interval_cnt = 0
         self.reclassify_interval = 10
 
+
     #  "features_all.csv"  / Get known faces from "features_all.csv"
+    
     def get_face_database(self):
+        # Add the delay
+        time.sleep(3)
         if os.path.exists("data/features_all.csv"):
             path_features_known_csv = "data/features_all.csv"
             csv_rd = pd.read_csv(path_features_known_csv, header=None)
