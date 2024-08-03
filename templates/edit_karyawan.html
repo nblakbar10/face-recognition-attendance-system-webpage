@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Karyawan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            /* Body styling */
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                background-color: #f4f4f4;
+                color: #333;
+                padding: 20px;
+            }
+
+            /* Header styling */
+            h1 {
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            /* Link styling */
+            a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            /* Table styling */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                background: #fff;
+            }
+
+            th, td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+
+            th {
+                background-color: #007bff;
+                color: white;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            /* Form styling */
+            form {
+                background: #fff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            input[type="submit"] {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+
+
+            /* Basic button styling */
+            button, .btn {
+                background-color: #007bff; /* Blue background */
+                color: white;             /* White text */
+                border: 2px solid #007bff; /* Blue border */
+                padding: 10px 20px;       /* Padding inside button */
+                border-radius: 0;         /* Square corners for box design */
+                cursor: pointer;          /* Pointer cursor on hover */
+                font-size: 16px;          /* Increase font size */
+                text-align: center;       /* Center text */
+                display: inline-block;    /* Allow padding and border to work */
+                text-decoration: none;    /* Remove underline from links */
+                transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition */
+            }
+
+            button:hover, .btn:hover {
+                background-color: #0056b3; /* Darker blue on hover */
+                border-color: #0056b3;     /* Darker blue border on hover */
+            }
+
+            button:focus, .btn:focus {
+                outline: none;            /* Remove default focus outline */
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5); /* Custom focus outline */
+            }
+
+            /* Specific button styling */
+            .btn-add {
+                background-color: #28a745; /* Green background for "Add" button */
+                border-color: #28a745;     /* Green border for "Add" button */
+            }
+
+            .btn-add:hover {
+                background-color: #218838; /* Darker green on hover */
+                border-color: #218838;     /* Darker green border on hover */
+            }
+
+            .btn-export {
+                background-color: #ffc107; /* Yellow background for "Export" button */
+                border-color: #ffc107;     /* Yellow border for "Export" button */
+            }
+
+            .btn-export:hover {
+                background-color: #e0a800; /* Darker yellow on hover */
+                border-color: #e0a800;     /* Darker yellow border on hover */
+            }
+            /* Specific button styling */
+            .btn-edit {
+                background-color: #17a2b8; /* Teal background for "Edit" button */
+                border-color: #17a2b8;     /* Teal border for "Edit" button */
+                color: white;             /* White text */
+            }
+
+            .btn-edit:hover {
+                background-color: #138496; /* Darker teal on hover */
+                border-color: #138496;     /* Darker teal border on hover */
+            }
+            /* General form styles */
+            form {
+                max-width: 600px; /* Set a max-width for the form */
+                margin: 0 auto;   /* Center the form horizontally */
+                padding: 20px;    /* Add some padding around the form */
+                background-color: #f9f9f9; /* Light background for form */
+                border-radius: 8px; /* Rounded corners */
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            }
+
+            label {
+                display: block;   /* Make labels block elements */
+                margin-bottom: 5px; /* Space between label and input */
+                font-weight: bold; /* Make labels bold */
+            }
+
+            input[type="text"], input[type="radio"] {
+                margin-bottom: 10px; /* Space below input elements */
+            }
+
+            input[type="radio"] {
+                margin-right: 5px; /* Space between radio button and label */
+            }
+
+            input[type="radio"] + label {
+                margin-right: 20px; /* Space between radio buttons */
+            }
+
+            /* Ensure labels and radio buttons align properly */
+            input[type="radio"] {
+                vertical-align: middle; /* Align radio buttons vertically */
+            }
+
+            input[type="radio"] + label {
+                display: inline; /* Keep labels inline with radio buttons */
+            }
+        </style>
+    
+</head>
+<body>
+    <h1>Edit Karyawan</h1>
+    <form action="{{ url_for('update_karyawan', old_name=karyawan['name']) }}" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ karyawan['name'] }}" required><br>
+        <label for="nik">NIK:</label>
+        <input type="text" id="nik" name="nik" value="{{ karyawan['nik'] }}" required><br>
+        <label>Jenis Kelamin:</label><br>
+        <input type="radio" id="pria" name="jenis_kelamin" value="Pria" {% if karyawan['jenis_kelamin'] == 'Pria' %}checked{% endif %} required>
+        <label for="pria">Pria</label><br>
+        <input type="radio" id="wanita" name="jenis_kelamin" value="Wanita" {% if karyawan['jenis_kelamin'] == 'Wanita' %}checked{% endif %} required>
+        <label for="wanita">Wanita</label><br>
+        <label for="jabatan">Jabatan:</label>
+        <input type="text" id="jabatan" name="jabatan" value="{{ karyawan['jabatan'] }}" required><br>
+        <label for="departemen">Departemen:</label>
+        <input type="text" id="departemen" name="departemen" value="{{ karyawan['departemen'] }}" required><br>
+        <input type="submit" value="Update Karyawan" class="btn btn-add">
+    </form>
+    <a href="{{ url_for('karyawan') }}" class="btn btn-export">Back to Karyawan Page</a>
+</body>
+</html>

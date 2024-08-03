@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-form, h2, form {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+  }
+  
+  table, th, td {
+    border: 1px solid black;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  img {
+    width: 100px;
+  }
+  
+  a {
+    margin: 5px;
+    text-decoration: none;
+  }
+  
