@@ -26,7 +26,7 @@ cursor = conn.cursor()
 # Create a table for the current date
 current_date = datetime.datetime.now().strftime("%Y_%m_%d")  # Replace hyphens with underscores
 table_name = "attendance" 
-create_table_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (name TEXT, time TEXT, date DATE, UNIQUE(name, date))"
+create_table_sql = f"CREATE TABLE IF NOT EXISTS {table_name} (name TEXT, checkin_time TEXT, checkout_time TEXT, date DATE, UNIQUE(name, date))"
 cursor.execute(create_table_sql)
 
 
@@ -85,8 +85,7 @@ class Face_Recognizer:
     #  "features_all.csv"  / Get known faces from "features_all.csv"
     
     def get_face_database(self):
-        # Add the delay
-        time.sleep(3)
+        
         if os.path.exists("data/features_all.csv"):
             path_features_known_csv = "data/features_all.csv"
             csv_rd = pd.read_csv(path_features_known_csv, header=None)
@@ -156,23 +155,56 @@ class Face_Recognizer:
         for i in range(len(self.current_frame_face_name_list)):
             img_rd = cv2.putText(img_rd, "Face_" + str(i + 1), tuple(
                 [int(self.current_frame_face_centroid_list[i][0]), int(self.current_frame_face_centroid_list[i][1])]),
-                                 self.font,
-                                 0.8, (255, 190, 0),
-                                 1,
-                                 cv2.LINE_AA)
+                                self.font,
+                                0.8, (255, 190, 0),
+                                1,
+                                cv2.LINE_AA)
     # insert data in database
 
     def attendance(self, name):
+        time.sleep(3)
         current_date = datetime.datetime.now().strftime('%Y-%m-%d')
-        # conn = sqlite3.connect("attendance.db")
         conn = sqlite3.connect("attendance.db")
         cursor = conn.cursor()
+        
         # Check if the name already has an entry for the current date
         cursor.execute("SELECT * FROM attendance WHERE name = ? AND date = ?", (name, current_date))
         existing_entry = cursor.fetchone()
 
+
         if existing_entry:
-            print(f"{name} is already marked as present for {current_date}")
+            current_time = datetime.datetime.now().time()
+            checkout_time_shift1 = datetime.datetime.strptime("18:00:00", "%H:%M:%S").time()
+            checkout_time_shift2 = datetime.datetime.strptime("23:00:00", "%H:%M:%S").time()
+            
+
+            if current_time > checkout_time_shift1 or current_time > checkout_time_shift2:
+                current_date = datetime.datetime.now().date().strftime("%Y-%m-%d")
+                checkout_time = datetime.datetime.now().strftime("%H:%M:%S")
+
+                # Check if there is an existing check-in record for today
+                cursor.execute('''
+                SELECT * FROM attendance WHERE name = ? AND date = ? AND checkin_time IS NOT NULL
+                ''', (name, current_date))
+                record = cursor.fetchone()
+                if record:
+                    # Update the existing record with checkout_time
+                    cursor.execute('''
+                    UPDATE attendance
+                    SET checkout_time = ?
+                    WHERE name = ? AND date = ?
+                    ''', (checkout_time, name, current_date))
+                    conn.commit()
+                    print(f"Checkout time for {name} updated to {checkout_time}")
+                else:
+                    print(f"No check-in record found for {name} today.")
+
+            else:
+            #     print("Current time is before 10:00 AM. Cannot insert checkout time.")
+            
+                print(f"{name} is already marked as present for {current_date}")
+                print("Current time is before 10:00 AM. Cannot insert checkout time.")
+            
         else:
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             cursor.execute("INSERT INTO attendance (name, checkin_time, date) VALUES (?, ?, ?)", (name, current_time, current_date))
@@ -183,6 +215,7 @@ class Face_Recognizer:
 
     #  Face detection and recognition wit OT from input video stream
     def process(self, stream):
+        time.sleep(3)
         # 1.  Get faces known from "features.all.csv"
         if self.get_face_database():
             while stream.isOpened():
@@ -221,12 +254,12 @@ class Face_Recognizer:
                                 [faces[k].left(), int(faces[k].bottom() + (faces[k].bottom() - faces[k].top()) / 4)]))
                             self.current_frame_face_centroid_list.append(
                                 [int(faces[k].left() + faces[k].right()) / 2,
-                                 int(faces[k].top() + faces[k].bottom()) / 2])
+                                int(faces[k].top() + faces[k].bottom()) / 2])
 
                             img_rd = cv2.rectangle(img_rd,
-                                                   tuple([d.left(), d.top()]),
-                                                   tuple([d.right(), d.bottom()]),
-                                                   (255, 255, 255), 2)
+                                                tuple([d.left(), d.top()]),
+                                                tuple([d.right(), d.bottom()]),
+                                                (255, 255, 255), 2)
 
                     #  Multi-faces in current frame, use centroid-tracker to track
                     if self.current_frame_face_cnt != 1:
@@ -235,8 +268,8 @@ class Face_Recognizer:
                     for i in range(self.current_frame_face_cnt):
                         # 6.2 Write names under ROI
                         img_rd = cv2.putText(img_rd, self.current_frame_face_name_list[i],
-                                             self.current_frame_face_position_list[i], self.font, 0.8, (0, 255, 255), 1,
-                                             cv2.LINE_AA)
+                                            self.current_frame_face_position_list[i], self.font, 0.8, (0, 255, 255), 1,
+                                            cv2.LINE_AA)
                     self.draw_note(img_rd)
 
                 # 6.2  If cnt of faces changes, 0->1 or 1->0 or ...
@@ -267,7 +300,7 @@ class Face_Recognizer:
                             logging.debug("  For face %d in current frame:", k + 1)
                             self.current_frame_face_centroid_list.append(
                                 [int(faces[k].left() + faces[k].right()) / 2,
-                                 int(faces[k].top() + faces[k].bottom()) / 2])
+                                int(faces[k].top() + faces[k].bottom()) / 2])
 
                             self.current_frame_face_X_e_distance_list = []
 
@@ -296,7 +329,7 @@ class Face_Recognizer:
                             if min(self.current_frame_face_X_e_distance_list) < 0.4:
                                 self.current_frame_face_name_list[k] = self.face_name_known_list[similar_person_num]
                                 logging.debug("  Face recognition result: %s",
-                                              self.face_name_known_list[similar_person_num])
+                                            self.face_name_known_list[similar_person_num])
                                 
                                 # Insert attendance record
                                 nam =self.face_name_known_list[similar_person_num]

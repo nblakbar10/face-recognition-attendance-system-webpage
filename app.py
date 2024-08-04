@@ -50,7 +50,7 @@ def attendance():
     conn = sqlite3.connect('attendance.db')
     cursor = conn.cursor()
 
-    cursor.execute("SELECT name, checkin_time, date FROM attendance WHERE date = ?", (formatted_date,))
+    cursor.execute("SELECT name, checkin_time, checkout_time, date FROM attendance WHERE date = ?", (formatted_date,))
     attendance_data = cursor.fetchall()
 
     conn.close()
@@ -148,6 +148,14 @@ def update_karyawan(old_name):
     conn.commit()
     conn.close()
     
+    return redirect(url_for('karyawan'))
+
+@app.route('/delete_karyawan/<name>', methods=['POST'])
+def delete_karyawan(name):
+    conn = get_karyawan_db_connection()
+    conn.execute('DELETE FROM karyawan WHERE name = ?', (name,))
+    conn.commit()
+    conn.close()
     return redirect(url_for('karyawan'))
 
 

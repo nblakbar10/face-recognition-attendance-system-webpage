@@ -80,16 +80,16 @@
                 <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Check In Time</th>
-                    <!-- <th scope="col">Check Out Time</th> -->
+                    <th scope="col">Check Out Time</th>
                     <th scope="col">Date</th>
                 </tr>
             </thead>
             <tbody>
-                {% for name, checkin_time, date in attendance_data %}
+                {% for name, checkin_time, checkout_time, date in attendance_data %}
                 <tr>
                     <td>{{ name }}</td>
                     <td>{{ checkin_time }}</td>
-                    <!-- <td>{{ checkout_time }}</td> -->
+                    <td>{{ checkout_time }}</td>
                     <td>{{ date }}</td>
                 </tr>
                 {% endfor %}
