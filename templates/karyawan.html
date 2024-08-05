@@ -203,13 +203,10 @@
                         </tbody>
                     </table>
                 </td>
-
                 <td>
-                    <form action="{{ url_for('edit_karyawan', name=item.karyawan['name']) }}" method="post">
-                        <button type="submit">Update</button>
-                    </form>
+                    <a href="{{ url_for('edit_karyawan', name=item.karyawan['name']) }}" class="btn btn-edit">Edit</a>
                     <form action="{{ url_for('delete_karyawan', name=item.karyawan['name']) }}" method="post">
-                        <button type="submit">Delete</button>
+                        <button type="submit" class="btn btn-edit">Delete</button>
                     </form>
                 </td>
             </tr>

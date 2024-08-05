@@ -170,7 +170,7 @@ class Face_Recognizer:
         # Check if the name already has an entry for the current date
         cursor.execute("SELECT * FROM attendance WHERE name = ? AND date = ?", (name, current_date))
         existing_entry = cursor.fetchone()
-
+    
 
         if existing_entry:
             current_time = datetime.datetime.now().time()

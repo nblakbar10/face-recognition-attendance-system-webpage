@@ -52,7 +52,7 @@ def attendance():
 
     cursor.execute("SELECT name, checkin_time, checkout_time, date FROM attendance WHERE date = ?", (formatted_date,))
     attendance_data = cursor.fetchall()
-
+    
     conn.close()
 
     if not attendance_data:
@@ -77,7 +77,7 @@ def export_all():
         attendance_conn.close()
     
     output.seek(0)
-    return send_file(output, attachment_filename='all_data.xlsx', as_attachment=True)
+    return send_file(output, attachment_filename=datetime.now().strftime('attendance_%Y%m%d_%H%M%S.xlsx'), as_attachment=True)
 
 @app.route('/karyawan')
 def karyawan():
